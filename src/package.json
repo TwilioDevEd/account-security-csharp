@@ -1,0 +1,14 @@
+{
+  "name": "Account Security",
+  "version": "1.0.0",
+  "description": "Account Security with Twilio Authy in C#",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "jshint": "^2.9.6"
+  }
+}
