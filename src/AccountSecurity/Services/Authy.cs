@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AccountSecurity.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -7,7 +10,6 @@ namespace AccountSecurity.Services {
     public class Authy {
         private readonly IConfiguration Configuration;
         private readonly IHttpClientFactory ClientFactory;
-        private readonly string baseUri = "https://api.authy.com/protected/json";
 
         public HttpClient client { get; }
 
@@ -17,6 +19,7 @@ namespace AccountSecurity.Services {
             Configuration = config;
             ClientFactory = clientFactory;
             client = ClientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://api.authy.com/protected/json");
             logger = loggerFactory.CreateLogger<UserController>();
 
         }
@@ -40,13 +43,18 @@ namespace AccountSecurity.Services {
             return NewRequest(uri, HttpMethod.Get);
         }
 
-        async Task registerUserAsync()
+        public async Task<Dictionary<string, string>> registerUserAsync(ApplicationUser user)
         {
-            var request = NewRequest($"{baseUri}/users/new");
+            var result = await client.PostAsJsonAsync("/user/new", new Dictionary<string, string>()
+            {
+                {"email", user.Email},
+                // {"country_code", user.CountryCode},
+                {"cellphone", user.PhoneNumber} 
+            });
 
-            var response = await client.SendAsync(request);
+            result.EnsureSuccessStatusCode();
 
-            response.EnsureSuccessStatusCode();
+            return await result.Content.ReadAsAsync<Dictionary<string, string>>();
         }
 
         async Task sendSmsAsync() {

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using AccountSecurity.Models;
+using AccountSecurity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +16,18 @@ namespace AccountSecurity {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<UserController> logger;
+        private readonly Authy authy;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            Authy authy)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = loggerFactory.CreateLogger<UserController>();
+            this.authy = authy;
         }
 
         [HttpPost("register")]
@@ -36,6 +40,7 @@ namespace AccountSecurity {
                 var result = await this.userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var authyUser = await authy.registerUserAsync(user);
                     await this.signInManager.SignInAsync(user, isPersistent: false);
                     logger.LogInformation(3, "User created a new account with password.");
                     return user;
