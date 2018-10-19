@@ -5,7 +5,7 @@ app.controller('LoginController', function ($scope, $http, $window) {
     $scope.setup = {};
 
     $scope.login = function () {
-        $http.post('/api/login', $scope.setup)
+        $http.post('/api/user/login', $scope.setup)
             .success(function (data, status, headers, config) {
                 console.log("Login success: ", data);
                 $window.location.href = $window.location.origin + "/2fa";
@@ -48,7 +48,7 @@ app.controller('AuthyController', function ($scope, $http, $window, $interval) {
     $scope.setup = {};
 
     $scope.logout = function () {
-        $http.get('/api/logout')
+        $http.get('/api/user/logout')
             .success(function (data, status, headers, config) {
                 console.log("Logout Response: ", data);
                 $window.location.href = $window.location.origin + "/2fa";

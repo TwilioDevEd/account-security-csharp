@@ -6,23 +6,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AccountSecurity {
 
     [Produces("application/json")]
     [Route("/api/user")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly ILogger<UserController> logger;
-        private readonly Authy authy;
+        public UserManager<ApplicationUser> userManager;
+        public SignInManager<ApplicationUser> signInManager;
+        public ILogger<UserController> logger;
+        public IAuthy authy;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILoggerFactory loggerFactory,
-            Authy authy)
+            IAuthy authy)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -36,17 +37,24 @@ namespace AccountSecurity {
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+                var user = new ApplicationUser { 
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    CountryCode = model.CountryCode,
+                    PhoneNumber = model.PhoneNumber,
+                    AuthyId = await authy.registerUserAsync(model)
+                };
+
+
                 var result = await this.userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    var authyUser = await authy.registerUserAsync(user);
                     await this.signInManager.SignInAsync(user, isPersistent: false);
                     logger.LogInformation(3, "User created a new account with password.");
                     return user;
+                } else {
+                    AddErrors(result);
                 }
-
-                AddErrors(result);
             }
 
             return BadRequest(ModelState);
@@ -58,25 +66,23 @@ namespace AccountSecurity {
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName };
-                await this.signInManager.SignInAsync(user, isPersistent: true);
-                return user;
+                var result = await this.signInManager.PasswordSignInAsync(model.UserName, model.Password, true, false);
+
+                if (result.Succeeded)
+                {
+                    var user = await userManager.FindByNameAsync(model.UserName);
+                    logger.LogDebug(JsonConvert.SerializeObject(user));
+
+                    return user;
+                } else {
+                    return BadRequest(result);
+                }
+
             }
             else
             {
                 return BadRequest(ModelState);
             }
         }
-
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        }
-
-
     }
 }

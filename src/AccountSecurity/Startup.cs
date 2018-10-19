@@ -1,10 +1,13 @@
+using System.Security.Claims;
+using AccountSecurity.Authorization;
 using AccountSecurity.Models;
 using AccountSecurity.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +40,16 @@ namespace AccountSecurity {
                     };
                 });
 
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy("AuthyVerified", policy => 
+                policy.Requirements.Add(new AuthyVerifiedRequirement()));
+            });
+
+            services.AddHttpClient();
             services.AddSingleton<IEmailSender, EmailSender>();
-            services.AddSingleton<Authy>();
+            services.AddSingleton<IAuthy, Authy>();
+            services.AddSingleton<IAuthorizationHandler, AuthyVerifiedHandler>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 

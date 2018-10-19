@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountSecurity {
@@ -32,6 +33,13 @@ namespace AccountSecurity {
         public IActionResult TwoFactorSample()
         {
             return View("~/wwwroot/2fa/index.html");
+        }
+
+        [HttpGet("protected")]
+        [Authorize(Policy="AuthyVerified")]
+        public IActionResult Protected()
+        {
+            return View("~/wwwroot/protected/index.html");
         }
 
         [HttpGet("contact")]
