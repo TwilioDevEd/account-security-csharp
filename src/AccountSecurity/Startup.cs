@@ -1,7 +1,8 @@
-using System.Security.Claims;
 using AccountSecurity.Authorization;
 using AccountSecurity.Models;
 using AccountSecurity.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
+using System.Security.Claims;
 
 namespace AccountSecurity {
     public class Startup {
@@ -26,9 +28,17 @@ namespace AccountSecurity {
         }
 
         public void ConfigureServices(IServiceCollection services) {
-            services.Configure<CookiePolicyOptions>(options => {
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+            // services.Configure<CookiePolicyOptions>(options => {
+            //     options.CheckConsentNeeded = context => true;
+            //     options.MinimumSameSitePolicy = SameSiteMode.None;
+            // });
+
+            services.AddAuthentication("AccountSecurityScheme")
+            .AddCookie("AccountSecurityScheme", opts => {
+                opts.AccessDeniedPath = "/logout";
+                opts.LoginPath = "/login";
+                opts.LogoutPath = "/logout";
+                // opts.SlidingExpiration = true;
             });
 
             services.AddMvc()
@@ -40,16 +50,16 @@ namespace AccountSecurity {
                     };
                 });
 
-            services.AddAuthorization(options => 
-            {
-                options.AddPolicy("AuthyVerified", policy => 
-                policy.Requirements.Add(new AuthyVerifiedRequirement()));
-            });
+            // services.AddAuthorization(options => 
+            // {
+            //     options.AddPolicy("AuthyVerified", policy => 
+            //     policy.Requirements.Add(new AuthyVerifiedRequirement()));
+            // });
 
             services.AddHttpClient();
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddSingleton<IAuthy, Authy>();
-            services.AddSingleton<IAuthorizationHandler, AuthyVerifiedHandler>();
+            // services.AddSingleton<IAuthorizationHandler, AuthyVerifiedHandler>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 

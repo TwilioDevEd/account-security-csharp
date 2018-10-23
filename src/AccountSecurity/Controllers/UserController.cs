@@ -49,7 +49,7 @@ namespace AccountSecurity {
                 var result = await this.userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await this.signInManager.SignInAsync(user, isPersistent: false);
+                    await this.signInManager.SignInAsync(user, authenticationMethod: "AccountSecurityScheme", isPersistent: true);
                     logger.LogInformation(3, "User created a new account with password.");
                     return user;
                 } else {
@@ -71,6 +71,9 @@ namespace AccountSecurity {
                 if (result.Succeeded)
                 {
                     var user = await userManager.FindByNameAsync(model.UserName);
+                    await signInManager.SignOutAsync();
+                    await this.signInManager.SignInAsync(user, authenticationMethod: "AccountSecurityScheme", isPersistent: true);
+
                     logger.LogDebug(JsonConvert.SerializeObject(user));
 
                     return user;
@@ -83,6 +86,13 @@ namespace AccountSecurity {
             {
                 return BadRequest(ModelState);
             }
+        }
+
+        [HttpGet("logout")]
+        public async Task<ActionResult> logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("index", "Home");
         }
     }
 }

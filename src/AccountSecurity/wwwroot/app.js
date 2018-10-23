@@ -3,7 +3,7 @@ var app = angular.module('accountSecurityQuickstart', []);
 app.controller('LoginController', function ($scope, $http, $window) {
 
     $scope.setup = {};
-
+    
     $scope.login = function () {
         $http.post('/api/user/login', $scope.setup)
             .success(function (data, status, headers, config) {
@@ -51,7 +51,7 @@ app.controller('AuthyController', function ($scope, $http, $window, $interval) {
         $http.get('/api/user/logout')
             .success(function (data, status, headers, config) {
                 console.log("Logout Response: ", data);
-                $window.location.href = $window.location.origin + "/2fa";
+                $window.location.href = $window.location.origin + "/";
             })
             .error(function (data, status, headers, config) {
                 console.error("Logout Error: ", data);
