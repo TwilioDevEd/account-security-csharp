@@ -26,22 +26,21 @@ namespace AccountSecurity {
         }
 
         [HttpGet("verification")]
-        [Authorize]
+        // [Authorize]
         public IActionResult Verification()
         {
             return View("~/wwwroot/verification/index.html");
         }
 
         [HttpGet("2fa")]
-        [Authorize]
+        // [Authorize]
         public IActionResult TwoFactorSample()
         {
             return View("~/wwwroot/2fa/index.html");
         }
 
         [HttpGet("protected")]
-        [Authorize]
-        // [Authorize(Policy="AuthyVerified")]
+        // [Authorize]
         public IActionResult Protected()
         {
             return View("~/wwwroot/protected/index.html");

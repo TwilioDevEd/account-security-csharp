@@ -28,18 +28,14 @@ namespace AccountSecurity {
         }
 
         public void ConfigureServices(IServiceCollection services) {
-            // services.Configure<CookiePolicyOptions>(options => {
-            //     options.CheckConsentNeeded = context => true;
-            //     options.MinimumSameSitePolicy = SameSiteMode.None;
-            // });
-
-            services.AddAuthentication("AccountSecurityScheme")
-            .AddCookie("AccountSecurityScheme", opts => {
-                opts.AccessDeniedPath = "/logout";
-                opts.LoginPath = "/login";
-                opts.LogoutPath = "/logout";
-                // opts.SlidingExpiration = true;
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
