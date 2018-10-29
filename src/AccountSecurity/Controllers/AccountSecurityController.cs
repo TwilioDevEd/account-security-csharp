@@ -39,7 +39,14 @@ namespace AccountSecurity {
 
             if (ModelState.IsValid)
             {
-                var result = await authy.verifyTokenAsync(currentUser.AuthyId, data.Token);
+                TokenVerificationResult result;
+
+                if(data.Token.Length > 4) {
+                    result = await authy.verifyTokenAsync(currentUser.AuthyId, data.Token);
+                } else {
+                    result = await authy.verifyPhoneTokenAsync(currentUser.PhoneNumber, currentUser.CountryCode, data.Token);
+                }
+
                 logger.LogDebug(result.ToString());
 
                 if (result.Succeeded)
@@ -69,5 +76,14 @@ namespace AccountSecurity {
             var result = await authy.sendSmsAsync(currentUser.AuthyId);
             return Ok(result);
         }
+
+        [HttpPost("voice")]
+        public async Task<ActionResult> voice()
+        {
+            var currentUser = await userManager.GetUserAsync(this.User);
+            var result = await authy.phoneVerificationCallRequestAsync(currentUser);
+            return Ok(result);
+        }
+
     }
 }

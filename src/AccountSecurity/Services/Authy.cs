@@ -15,7 +15,9 @@ namespace AccountSecurity.Services {
     {
         Task<string> registerUserAsync(RegisterViewModel user);
         Task<TokenVerificationResult> verifyTokenAsync(string authyId, string token);
+        Task<TokenVerificationResult> verifyPhoneTokenAsync(string phoneNumber, string countryCode, string token);
         Task<string> sendSmsAsync(string authyId);
+        Task<string> phoneVerificationCallRequestAsync(ApplicationUser currentUser);
     }
 
     public class Authy: IAuthy {
@@ -75,10 +77,45 @@ namespace AccountSecurity.Services {
             return new TokenVerificationResult(message);
         }
 
+        public async Task<TokenVerificationResult> verifyPhoneTokenAsync(string phoneNumber, string countryCode, string token)
+        {
+            var result = await client.GetAsync(
+                $"/protected/json/phones/verification/check?phone_number={phoneNumber}&country_code={countryCode}&verification_code={token}"
+            );
+
+            logger.LogDebug(result.ToString());
+            logger.LogDebug(result.Content.ReadAsStringAsync().Result);
+
+            var message = await result.Content.ReadAsStringAsync();
+
+            if(result.StatusCode == HttpStatusCode.OK) {
+                return new TokenVerificationResult(message);
+            }
+
+            return new TokenVerificationResult(message, false);
+        }
+
         public async Task<string> sendSmsAsync(string authyId) {
             var result = await client.GetAsync($"/protected/json/sms/{authyId}?force=true");
 
             logger.LogDebug(result.ToString());
+
+            result.EnsureSuccessStatusCode();
+
+            return await result.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> phoneVerificationCallRequestAsync(ApplicationUser user)
+        {
+            var result = await client.PostAsync(
+                $"/protected/json/phones/verification/start?via=call&country_code={user.CountryCode}&phone_number={user.PhoneNumber}",
+                null
+            );
+
+            var content = await result.Content.ReadAsStringAsync();
+
+            logger.LogDebug(result.ToString());
+            logger.LogDebug(content);
 
             result.EnsureSuccessStatusCode();
 
