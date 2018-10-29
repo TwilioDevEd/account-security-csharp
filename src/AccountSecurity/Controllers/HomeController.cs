@@ -1,46 +1,58 @@
+using System.Threading.Tasks;
+using AccountSecurity.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountSecurity {
     [Route("/")]
     public class HomeController : Controller
     {
+        public SignInManager<ApplicationUser> signInManager;
+
+        public HomeController(SignInManager<ApplicationUser> signInManager) {
+            this.signInManager = signInManager;
+        }
+
         [HttpGet]
-        [HttpGet("index")]
+        [AllowAnonymous, HttpGet("index")]
         public IActionResult Index()
         {
             return View("~/wwwroot/index.html");
         }
 
-        [HttpGet("register")]
+        [AllowAnonymous, HttpGet("register")]
         public IActionResult Register()
         {
             return View("~/wwwroot/register/index.html");
         }
 
-        [HttpGet("login")]
+        [AllowAnonymous, HttpGet("login")]
         public IActionResult Login()
         {
             return View("~/wwwroot/login/index.html");
         }
 
-        [HttpGet("verification")]
-        // [Authorize]
+        [Authorize, HttpGet("logout")] 
+        public async Task<IActionResult> Logout() { 
+            await signInManager.SignOutAsync(); 
+            return RedirectToAction("Index", "Home"); 
+        } 
+
+        [Authorize, HttpGet("verification")]
         public IActionResult Verification()
         {
             return View("~/wwwroot/verification/index.html");
         }
 
-        [HttpGet("2fa")]
-        // [Authorize]
+        [Authorize, HttpGet("2fa")]
         public IActionResult TwoFactorSample()
         {
             return View("~/wwwroot/2fa/index.html");
         }
 
-        [HttpGet("protected")]
-        // [Authorize]
+        [Authorize(Policy = "AuthyTwoFactor"), HttpGet("protected")]
         public IActionResult Protected()
         {
             return View("~/wwwroot/protected/index.html");

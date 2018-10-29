@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountSecurity.Models;
 using AccountSecurity.Services;
@@ -10,8 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AccountSecurity {
 
-    [Produces("application/json")]
-    [Route("/api/accountsecurity")]
+    [Authorize, Route("/api/accountsecurity"), Produces("application/json")]
     public class AccountSecurityController : BaseController
     {
         public UserManager<ApplicationUser> userManager;
@@ -43,6 +44,14 @@ namespace AccountSecurity {
 
                 if (result.Succeeded)
                 {
+                    // Add TokenVerification claim to current user in order to allow them access
+                    // to routes protected with AuthyTwoFactor authorization policy.
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.AuthenticationMethod, "TokenVerification")
+                    };
+                    await userManager.AddClaimsAsync(currentUser, claims);
+
                     return Ok(result);
                 } else {
                     return BadRequest(result);
