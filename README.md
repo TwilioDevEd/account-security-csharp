@@ -1,4 +1,8 @@
-# Two-Factor Authentication with Node.js and Authy
+<a href="https://www.twilio.com">
+  <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
+</a>
+
+# Two-Factor Authentication with ASP.NET Core and Authy
 
 Here you will learn how to create a login system for Express applications secured with 2FA using Authy.
 
@@ -6,77 +10,60 @@ Here you will learn how to create a login system for Express applications secure
 
 ## Quickstart
 
+ 
 ### Create an Authy app
 
-Create a free [Authy account](https://www.authy.com/developers/) if you don't
+Enable Authy in your [Twilio Account](https://www.twilio.com/authy/) if you don't
 have one already, and then connect it to your Twilio account.
 
 ### Local development
 
-This project is built using the [Express](http://expressjs.com/) web framework.
+This project is built using [Install .NET Core](https://www.microsoft.com/net/download).
 
 1. First clone this repository and `cd` into it.
 
    ```bash
-   $ git clone git@github.com:TwilioDevEd/authy2fa-node.git
-   $ cd authy2fa-node
+   $ git clone git@github.com:TwilioDevEd/account-security-csharp.git
+   $ cd account-security-csharp 
    ```
 
 1. Install the dependencies.
 
    ```bash
-   $ npm install
+   $ cd /src/AccountSecurity
+   $ dotnet restore 
    ```
+#### MSSql Server
 
-1. Make sure you have installed [MongoDB](https://www.mongodb.org/). _If on a Mac, you can use this [guide](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/) to install it._
+You can either install it or run it in a docker container.
 
-1. Export the environment variables.
+- [Install MSSQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
 
-   You can find your **Authy Api Key** for Production at https://dashboard.authy.com/. The default MongoDB URL when running MongoDB locally is shown below.
+- Run in a docker container:
 
-   ```bash
-   $ export AUTHY_API_KEY=Your Authy API Key
-   $ export MONGO_URL=mongodb://127.0.0.1:27017
-   ```
+  `docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 --name mssql -d microsoft/mssql-server-linux:latest`
+
+1. Set your Authy App API Key in your `appsettings.json` as `AuthyApiKey` which should be found under your [Authy App Settings](https://www.twilio.com/console/authy/applications).
 
 1. Run the server.
 
    ```bash
-   $ node .
-   ```
-
-   Alternatively you might also consider using [nodemon](https://github.com/remy/nodemon) for this.
-   It works just like the node command, but automatically restarts your application when you change
-   any source code files.
-
-   ```
-   $ npm install -g nodemon
-   $ nodemon .
+   $ dotnet run --environment development 
    ```
 
 1. Expose your application to the wider internet using [ngrok](http://ngrok.com). You can click
   [here](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html) for more details. This step
   is important because the application won't work as expected if you run it through localhost.
 
-  ```bash
-  $ ngrok http 3000
-  ```
+    ```bash
+    $ ngrok http 5000 
+    ```
 
   Once ngrok is running, open up your browser and go to your ngrok URL.
   It will look something like this: `http://9a159ccf.ngrok.io`
 
-1. Go to your https://dashboard.authy.com. On the menu to the right you'll find the
-   **Settings**. Go to **OneTouch settings** and update the _Endpoint/URL_ with the
-   endpoint you created. Something like this:
-
-   `http://[your-ngrok-subdomain].ngrok.io/authy/callback`
-
-   If you deployed this application to production, the the Endpoint/URL should look like this:
-
-   `http://[your-domain].com/authy/callback`
-
 ## Meta
 
-* No warranty expressed or implied. Software is as is. Diggity.
+* No warranty expressed or implied. Software is as is. 
 * [MIT License](http://www.opensource.org/licenses/mit-license.html)
 * Lovingly crafted by Twilio Developer Education.
