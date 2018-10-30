@@ -52,7 +52,7 @@ namespace AccountSecurity {
             return View("~/wwwroot/2fa/index.html");
         }
 
-        [Authorize(Policy = "AuthyTwoFactor"), HttpGet("protected")]
+        [Authorize, HttpGet("protected")]
         public IActionResult Protected()
         {
             return View("~/wwwroot/protected/index.html");

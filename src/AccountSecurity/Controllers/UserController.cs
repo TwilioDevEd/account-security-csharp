@@ -71,6 +71,11 @@ namespace AccountSecurity {
                 if (result.Succeeded)
                 {
                     var user = await userManager.FindByNameAsync(model.UserName);
+                    var claims = await userManager.GetClaimsAsync(user);
+
+                    logger.LogDebug("#########");
+                    logger.LogDebug(JsonConvert.SerializeObject(claims));
+
                     await signInManager.SignOutAsync();
                     await this.signInManager.SignInAsync(user, authenticationMethod: "AccountSecurityScheme", isPersistent: true);
 

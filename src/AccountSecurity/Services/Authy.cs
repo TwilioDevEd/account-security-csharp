@@ -18,6 +18,8 @@ namespace AccountSecurity.Services {
         Task<TokenVerificationResult> verifyPhoneTokenAsync(string phoneNumber, string countryCode, string token);
         Task<string> sendSmsAsync(string authyId);
         Task<string> phoneVerificationCallRequestAsync(ApplicationUser currentUser);
+        Task<string> createApprovalRequestAsync(string authyId);
+        Task<object> checkRequestStatusAsync(string onetouch_uuid);
     }
 
     public class Authy: IAuthy {
@@ -120,6 +122,43 @@ namespace AccountSecurity.Services {
             result.EnsureSuccessStatusCode();
 
             return await result.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> createApprovalRequestAsync(string authyId)
+        {
+            var requestData = new Dictionary<string, string>() {
+                { "message", "OneTouch Approval Request" },
+                { "details", "My Message Details" },
+                { "seconds_to_expire", "300" }
+            };
+
+            var result = await client.PostAsJsonAsync(
+                $"/onetouch/json/users/{authyId}/approval_requests",
+                requestData
+            );
+
+            logger.LogDebug(result.ToString());
+            var str_content = await result.Content.ReadAsStringAsync();
+            logger.LogDebug(str_content);
+
+            result.EnsureSuccessStatusCode();
+
+            var content = await result.Content.ReadAsAsync<Dictionary<string, object>>();
+            var approval_request_data = (JObject)content["approval_request"];
+
+            return (string)approval_request_data["uuid"];
+        }
+
+        public async Task<object> checkRequestStatusAsync(string onetouch_uuid)
+        {
+            var result = await client.GetAsync($"/onetouch/json/approval_requests/{onetouch_uuid}");
+            logger.LogDebug(result.ToString());
+            var str_content = await result.Content.ReadAsStringAsync();
+            logger.LogDebug(str_content);
+
+            result.EnsureSuccessStatusCode();
+
+            return await result.Content.ReadAsAsync<object>();
         }
     }
 

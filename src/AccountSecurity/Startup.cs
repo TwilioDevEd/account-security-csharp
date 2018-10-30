@@ -33,6 +33,12 @@ namespace AccountSecurity {
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AccountSecurityContext>()
+                .AddSignInManager()
+                .AddDefaultTokenProviders();
+
             services.AddAuthentication(opts=>{
                     opts.DefaultScheme = IdentityConstants.ApplicationScheme;
                 })
@@ -42,6 +48,7 @@ namespace AccountSecurity {
                         c.Cookie.Name = "MainCookie";
                         c.LoginPath = "/login";
                         c.LogoutPath = "/logout";
+                        c.ExpireTimeSpan = TimeSpan.FromMinutes(1);
                     });
                 });
 
@@ -49,15 +56,19 @@ namespace AccountSecurity {
 
             services.AddSession(opts => {
                 opts.Cookie.IsEssential = true;
-                opts.IdleTimeout = TimeSpan.FromMinutes(5);
+                opts.IdleTimeout = TimeSpan.FromMinutes(1);
                 opts.Cookie.HttpOnly = true;
             });
 
-            services.AddIdentityCore<ApplicationUser>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<AccountSecurityContext>()
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddPolicy("AuthyTwoFactor", policy =>
+                                policy.RequireClaim("TokenVerification"));
+            });
 
             services.AddDbContext<AccountSecurityContext>(options =>
                 options.UseSqlServer(
@@ -71,16 +82,6 @@ namespace AccountSecurity {
                         NamingStrategy = new SnakeCaseNamingStrategy()
                     };
                 });
-
-            services.AddAuthorization(options =>
-            {
-                options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-
-                options.AddPolicy("AuthyTwoFactor", policy =>
-                                policy.RequireClaim(ClaimTypes.AuthenticationMethod, "TokenVerification"));
-            });
 
             services.AddHttpClient();
             services.AddSingleton<IEmailSender, EmailSender>();

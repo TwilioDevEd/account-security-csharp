@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AccountSecurity.Models;
 using AccountSecurity.Services;
+using AccountSecurity.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AccountSecurity {
 
-    [Authorize, Route("/api/accountsecurity"), Produces("application/json")]
+    [
+        Authorize,
+        Route("/api/accountsecurity"),
+        Produces("application/json")
+    ]
     public class AccountSecurityController : BaseController
     {
         public UserManager<ApplicationUser> userManager;
@@ -30,6 +35,20 @@ namespace AccountSecurity {
             this.signInManager = signInManager;
             this.logger = loggerFactory.CreateLogger<UserController>();
             this.authy = authy;
+        }
+
+        internal async Task<IList<Claim>> addTokenVerificationClaim(ApplicationUser user) {
+            var tokenVerificationClaim = new Claim(ClaimTypes.AuthenticationMethod, "TokenVerification");
+            var claims = new List<Claim>();
+            claims.Add(tokenVerificationClaim);
+
+            var userClaims = (List<Claim>)await userManager.GetClaimsAsync(user);
+
+            if (userClaims.FindIndex(claim => claim.Value.Equals("TokenVerification")) == -1) {
+                await userManager.AddClaimsAsync(user, claims);
+            }
+
+            return await userManager.GetClaimsAsync(user);
         }
 
         [HttpPost("verify")]
@@ -51,14 +70,7 @@ namespace AccountSecurity {
 
                 if (result.Succeeded)
                 {
-                    // Add TokenVerification claim to current user in order to allow them access
-                    // to routes protected with AuthyTwoFactor authorization policy.
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.AuthenticationMethod, "TokenVerification")
-                    };
-                    await userManager.AddClaimsAsync(currentUser, claims);
-
+                    await addTokenVerificationClaim(currentUser);
                     return Ok(result);
                 } else {
                     return BadRequest(result);
@@ -84,6 +96,35 @@ namespace AccountSecurity {
             var result = await authy.phoneVerificationCallRequestAsync(currentUser);
             return Ok(result);
         }
+
+        [HttpPost("onetouch")]
+        public async Task<ActionResult> oneTouch()
+        {
+            var currentUser = await userManager.GetUserAsync(this.User);
+            var onetouch_uuid = await authy.createApprovalRequestAsync(currentUser.AuthyId);
+            HttpContext.Session.Set<string>("onetouch_uuid", onetouch_uuid);
+            return Ok();
+        }
+
+        [HttpPost("onetouchstatus")]
+        public async Task<ActionResult> oneTouchStatus()
+        {
+            var currentUser = await userManager.GetUserAsync(this.User);
+            var onetouch_uuid = HttpContext.Session.Get<string>("onetouch_uuid");
+
+            var result = await authy.checkRequestStatusAsync(onetouch_uuid);
+            var data = (JObject)result;
+            var approval_request_status = (string)data["approval_request"]["status"];
+
+            if (approval_request_status == "approved") {
+                await addTokenVerificationClaim(currentUser);
+                await userManager.UpdateAsync(currentUser);
+            }
+
+
+            return Ok(result);
+        }
+
 
     }
 }
