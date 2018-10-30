@@ -33,7 +33,7 @@ This project is built using [Install .NET Core](https://www.microsoft.com/net/do
    $ cd /src/AccountSecurity
    $ dotnet restore 
    ```
-#### MSSql Server
+#### MSSQL Server
 
 You can either install it or run it in a docker container.
 
