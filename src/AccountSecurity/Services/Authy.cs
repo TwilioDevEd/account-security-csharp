@@ -17,7 +17,8 @@ namespace AccountSecurity.Services {
         Task<TokenVerificationResult> verifyTokenAsync(string authyId, string token);
         Task<TokenVerificationResult> verifyPhoneTokenAsync(string phoneNumber, string countryCode, string token);
         Task<string> sendSmsAsync(string authyId);
-        Task<string> phoneVerificationCallRequestAsync(ApplicationUser currentUser);
+        Task<string> phoneVerificationCallRequestAsync(string countryCode, string phoneNumber);
+        Task<string> phoneVerificationRequestAsync(string countryCode, string phoneNumber);
         Task<string> createApprovalRequestAsync(string authyId);
         Task<object> checkRequestStatusAsync(string onetouch_uuid);
     }
@@ -107,10 +108,27 @@ namespace AccountSecurity.Services {
             return await result.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> phoneVerificationCallRequestAsync(ApplicationUser user)
+        public async Task<string> phoneVerificationCallRequestAsync(string countryCode, string phoneNumber)
         {
             var result = await client.PostAsync(
-                $"/protected/json/phones/verification/start?via=call&country_code={user.CountryCode}&phone_number={user.PhoneNumber}",
+                $"/protected/json/phones/verification/start?via=call&country_code={countryCode}&phone_number={phoneNumber}",
+                null
+            );
+
+            var content = await result.Content.ReadAsStringAsync();
+
+            logger.LogDebug(result.ToString());
+            logger.LogDebug(content);
+
+            result.EnsureSuccessStatusCode();
+
+            return await result.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> phoneVerificationRequestAsync(string countryCode, string phoneNumber)
+        {
+            var result = await client.PostAsync(
+                $"/protected/json/phones/verification/start?via=sms&country_code={countryCode}&phone_number={phoneNumber}",
                 null
             );
 

@@ -93,7 +93,10 @@ namespace AccountSecurity {
         public async Task<ActionResult> voice()
         {
             var currentUser = await userManager.GetUserAsync(this.User);
-            var result = await authy.phoneVerificationCallRequestAsync(currentUser);
+            var result = await authy.phoneVerificationCallRequestAsync(
+                currentUser.CountryCode,
+                currentUser.PhoneNumber
+            );
             return Ok(result);
         }
 
