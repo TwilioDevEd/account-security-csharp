@@ -41,10 +41,6 @@ namespace AccountSecurity {
         {
             HttpContext.Session.Set<PhoneVerificationRequestModel>("phone_verification_request", verificationRequest);
 
-            logger.LogDebug("###########");
-            logger.LogDebug(JsonConvert.SerializeObject(verificationRequest));
-            logger.LogDebug("###########");
-
             if (ModelState.IsValid)
             {
                 string result;

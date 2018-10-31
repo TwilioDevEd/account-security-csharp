@@ -15,7 +15,7 @@ namespace AccountSecurity.Models
         public string CountryCode { get; set; }
 
         [Required]
-        [StringLength(16, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 11)]
+        [StringLength(16, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
         public string PhoneNumber { get; set; }
 
         public Verification via { get; set; }

@@ -97,7 +97,7 @@ app.controller('AuthyController', function ($scope, $http, $window, $interval) {
             })
             .error(function (data, status, headers, config) {
                 console.error("Verify error: ", data);
-                alert("Problem verifying token");
+                alert("Problem verifying token \n" + JSON.stringify(data));
             });
     };
 
@@ -115,7 +115,7 @@ app.controller('AuthyController', function ($scope, $http, $window, $interval) {
             })
             .error(function (data, status, headers, config) {
                 console.error("Onetouch error: ", data);
-                alert("Problem creating OneTouch request");
+                alert("Problem creating OneTouch request \n" + JSON.stringify(data));
             });
     };
 
@@ -135,7 +135,7 @@ app.controller('AuthyController', function ($scope, $http, $window, $interval) {
             })
             .error(function (data, status, headers, config) {
                 console.log("OneTouch Polling Status: ", data);
-                alert("Something went wrong with the OneTouch polling");
+                alert("Something went wrong with the OneTouch polling \n" + JSON.stringify(data));
                 $interval.cancel(pollingID);
             });
     }
@@ -162,6 +162,7 @@ app.controller('PhoneVerificationController', function ($scope, $http, $window, 
             })
             .error(function (data, status, headers, config) {
                 console.error("Phone verification error: ", data);
+                alert("Error verifying the token.  Check console for details. \n" + JSON.stringify(data));
             });
     };
 
@@ -176,7 +177,7 @@ app.controller('PhoneVerificationController', function ($scope, $http, $window, 
             })
             .error(function (data, status, headers, config) {
                 console.error("Verification error: ", data);
-                alert("Error verifying the token.  Check console for details.");
+                alert("Error verifying the token.  Check console for details.\n" + JSON.stringify(data));
             });
     };
 
