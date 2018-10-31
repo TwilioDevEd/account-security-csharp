@@ -46,6 +46,12 @@ namespace AccountSecurity {
             return View("~/wwwroot/verification/index.html");
         }
 
+        [Authorize, HttpGet("verified")]
+        public IActionResult Verified()
+        {
+            return View("~/wwwroot/verified/index.html");
+        }
+
         [Authorize, HttpGet("2fa")]
         public IActionResult TwoFactorSample()
         {

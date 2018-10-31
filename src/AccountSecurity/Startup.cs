@@ -43,12 +43,11 @@ namespace AccountSecurity {
                     opts.DefaultScheme = IdentityConstants.ApplicationScheme;
                 })
                 .AddIdentityCookies(opts =>{
-                    // This would be empty typically, just demonstrating the new API per cookie
                     opts.ApplicationCookie.Configure(c => {
                         c.Cookie.Name = "MainCookie";
                         c.LoginPath = "/login";
                         c.LogoutPath = "/logout";
-                        c.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                        c.ExpireTimeSpan = TimeSpan.FromHours(1);
                     });
                 });
 

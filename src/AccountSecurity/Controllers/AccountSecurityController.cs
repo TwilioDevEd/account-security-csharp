@@ -127,7 +127,5 @@ namespace AccountSecurity {
 
             return Ok(result);
         }
-
-
     }
 }
