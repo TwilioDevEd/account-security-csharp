@@ -14,7 +14,6 @@ using Newtonsoft.Json.Linq;
 namespace AccountSecurity {
 
     [
-        Authorize,
         Route("/api/verification"),
         Produces("application/json")
     ]
@@ -41,6 +40,10 @@ namespace AccountSecurity {
         public async Task<ActionResult> start([FromBody]PhoneVerificationRequestModel verificationRequest)
         {
             HttpContext.Session.Set<PhoneVerificationRequestModel>("phone_verification_request", verificationRequest);
+
+            logger.LogDebug("###########");
+            logger.LogDebug(JsonConvert.SerializeObject(verificationRequest));
+            logger.LogDebug("###########");
 
             if (ModelState.IsValid)
             {
