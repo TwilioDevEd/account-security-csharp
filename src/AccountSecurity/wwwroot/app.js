@@ -12,7 +12,7 @@ app.controller('LoginController', function ($scope, $http, $window) {
             })
             .error(function (data, status, headers, config) {
                 console.error("Login error: ", data);
-                alert("Error logging in.  Check console");
+                alert("Error logging in.  Check console \n" + JSON.stringify(data));
             });
     };
 });
@@ -33,7 +33,7 @@ app.controller('RegistrationController', function ($scope, $http, $window) {
                 })
                 .error(function (data, status, headers, config) {
                     console.error("Registration error: ", data);
-                    alert("Error registering.  Check console");
+                    alert("Error registering.  Check console \n" + JSON.stringify(data));
                 });
         } else {
             alert("Passwords do not match");
