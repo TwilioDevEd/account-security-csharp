@@ -40,7 +40,7 @@ namespace AccountSecurity {
             return RedirectToAction("Index", "Home"); 
         } 
 
-        [Authorize, HttpGet("verification")]
+        [HttpGet("verification")]
         public IActionResult Verification()
         {
             return View("~/wwwroot/verification/index.html");
