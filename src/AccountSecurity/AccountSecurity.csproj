@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <DotNetCoreVersion>2.1.5</DotNetCoreVersion>
+    <DotNetCoreVersion>2.2.3</DotNetCoreVersion>
   </PropertyGroup>
 
   <ItemGroup>
