@@ -9,6 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jshint": "^2.9.6"
+    "jshint": "^2.11.1"
   }
 }
