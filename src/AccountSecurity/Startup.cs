@@ -74,8 +74,7 @@ namespace AccountSecurity {
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options => {
+                .AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver
                     {
                         NamingStrategy = new SnakeCaseNamingStrategy()
