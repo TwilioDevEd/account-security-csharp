@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using System.Security.Claims;
@@ -21,7 +22,7 @@ namespace AccountSecurity {
 
         private readonly ILogger<UserController> logger;
 
-        public Startup(IHostingEnvironment env, IConfiguration config, ILoggerFactory loggerFactory) {
+        public Startup(IWebHostEnvironment env, IConfiguration config, ILoggerFactory loggerFactory) {
             logger = loggerFactory.CreateLogger<UserController>();
             Configuration = config;
         }
@@ -74,6 +75,7 @@ namespace AccountSecurity {
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver
                     {
@@ -87,7 +89,7 @@ namespace AccountSecurity {
             services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             } else {
@@ -99,8 +101,14 @@ namespace AccountSecurity {
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
+            app.UseRouting();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

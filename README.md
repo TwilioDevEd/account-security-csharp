@@ -18,7 +18,7 @@ have one already, and then connect it to your Twilio account.
 
 ### Local development
 
-This project is built using [Install .NET Core](https://www.microsoft.com/net/download), which will need to be installed before continuing.
+This project is built using [.NET Core](https://www.microsoft.com/net/download), which will need to be installed before continuing.
 
 1. First clone this repository and `cd` into it.
 
