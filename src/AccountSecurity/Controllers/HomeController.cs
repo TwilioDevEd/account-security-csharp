@@ -16,22 +16,21 @@ namespace AccountSecurity {
         }
 
         [HttpGet]
-        [AllowAnonymous, HttpGet("index")]
         public IActionResult Index()
         {
-            return View("~/wwwroot/index.html");
+            return View();
         }
 
         [AllowAnonymous, HttpGet("register")]
         public IActionResult Register()
         {
-            return View("~/wwwroot/register/index.html");
+            return View();
         }
 
         [AllowAnonymous, HttpGet("login")]
         public IActionResult Login()
         {
-            return View("~/wwwroot/login/index.html");
+            return View();
         }
 
         [Authorize, HttpGet("logout")] 
@@ -43,25 +42,25 @@ namespace AccountSecurity {
         [HttpGet("verification")]
         public IActionResult Verification()
         {
-            return View("~/wwwroot/verification/index.html");
+            return View();
         }
 
         [HttpGet("verified")]
         public IActionResult Verified()
         {
-            return View("~/wwwroot/verified/index.html");
+            return View();
         }
 
         [Authorize, HttpGet("2fa")]
         public IActionResult TwoFactorSample()
         {
-            return View("~/wwwroot/2fa/index.html");
+            return View();
         }
 
         [Authorize, HttpGet("protected")]
         public IActionResult Protected()
         {
-            return View("~/wwwroot/protected/index.html");
+            return View();
         }
 
         [HttpGet("error")]

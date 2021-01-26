@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Twilio Authy Demo</title>
+    <title>Protected Content - Twilio Authy Quickstart</title>
     <!--Made by an engineer for engineers-->
     <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16">
@@ -12,6 +12,7 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
@@ -27,39 +28,27 @@
 </head>
 <body ng-app="accountSecurityQuickstart">
 
-<div class="container login" ng-controller="LoginController">
+<div class="container" ng-controller="AuthyController">
     <div class="row centered-form">
         <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Account Security Demo Login</h3>
+                    <h3 class="panel-title">Protected by Twilio Authy 2FA</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <input type="text" name="user_name" id="user_name" class="form-control input-sm"
-                                           ng-model="setup.user_name"
-                                           placeholder="User Name">
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <p>
+                                Congrats! You have successfully implemented Twilio Authy Two-Factor Authentication. Browse the links below for more information related to Twilio Account Security.
+                            </p>
+                            <ng-include src="'/partials/links.html'"></ng-include>
                         </div>
-
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <input type="password" name="password" id="login_password"
-                                           class="form-control input-sm"
-                                           ng-model="setup.password"
-                                           placeholder="Password">
-                                </div>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <input type="submit" value="Logout" ng-click="logout()" class="btn btn-info btn-block">
                         </div>
-
-                        <input type="submit" value="Login"  ng-click="login()" class="btn btn-info btn-block">
-                        <small style="float: right;"><a href="/register">Not registered?</a></small>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

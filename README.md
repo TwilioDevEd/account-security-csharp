@@ -18,7 +18,7 @@ have one already, and then connect it to your Twilio account.
 
 ### Local development
 
-This project is built using [Install .NET Core](https://www.microsoft.com/net/download), which will need to be installed before continuing.
+This project is built using [.NET Core](https://www.microsoft.com/net/download), which will need to be installed before continuing.
 
 1. First clone this repository and `cd` into it.
 
@@ -44,6 +44,11 @@ You can either install it or run it in a docker container.
   `docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 --name mssql -d microsoft/mssql-server-linux:latest`
 
 1. Make sure your `DefaultConnection` connection string is correct for your SQL Server installation. (You may need to change the `Server` to `localhost\\SQLEXPRESS` if running MSSQL Server Express on Windows.)
+
+1. Install the Entity Framework tool:
+    ```bash
+    dotnet tool install --global dotnet-ef --version 3.1.4
+    ```
 
 1. Run the database migrations:
 
