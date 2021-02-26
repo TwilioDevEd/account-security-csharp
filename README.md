@@ -4,6 +4,8 @@
 
 # Two-Factor Authentication with ASP.NET Core and Authy
 
+![](https://github.com/TwilioDevEd/account-security-csharp/workflows/NetFx/badge.svg)
+
 Here you will learn how to create a login system for ASP.NET Core applications secured with 2FA using Authy.
 
 [Learn more about this code in our docs](https://www.twilio.com/docs/authy/quickstart/dotnet-core-csharp-two-factor-authentication).
