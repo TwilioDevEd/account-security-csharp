@@ -8,20 +8,16 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-      name: Checkout Code
-
-    - name: Setup MSBuild Path
-      uses: microsoft/setup-msbuild@v1
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1
-
-    - name: Restore NuGet Packages
-      run: nuget restore src\AccountSecurity.sln
-
-    - name: Build Web App
-      run: msbuild src\AccpountSecurity.sln /verbosity:minimal
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Restore dependencies
+      run: dotnet restore src/AccountSecurity
+    - name: Build
+      run: dotnet build src/AccountSecurity --no-restore
